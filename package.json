@@ -1,0 +1,25 @@
+{
+  "name": "posthtml-jsonld",
+  "version": "0.0.0",
+  "description": "PostHTML plugin to import JSON-LD from the external JSON file",
+  "keywords": [
+    "posthtml",
+    "posthtml-plugin",
+    "html",
+    "json-ld"
+  ],
+  "author": "Kairi <seamile.rivercape@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seamile4kairi/posthtml-jsonld.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seamile4kairi/posthtml-jsonld/issues"
+  },
+  "homepage": "https://github.com/seamile4kairi/posthtml-jsonld#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
