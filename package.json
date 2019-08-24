@@ -20,6 +20,20 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
+    "prebuild": "rm -f lib/*.js",
+    "build": "babel -d lib/ lib/",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^10.0.2",
+    "babel-preset-es2015": "^6.24.1",
+    "posthtml": "^0.11.4"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   }
 }
