@@ -9,5 +9,5 @@ test('index.html', async t => {
     root: 'test/fixtures'
   })
 
-  return t.is(result.html, builder.expect)
+  return t.is(builder.expect, result.html)
 })
