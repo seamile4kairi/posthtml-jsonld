@@ -12,7 +12,8 @@ const errors = {
 export default (options = {}) => tree => {
   options = Object.assign({
     root: './',
-    meta: false,
+    title: false,
+    description: false,
     opengraph: false,
     twittercards: false
   }, options)
@@ -44,7 +45,16 @@ class JsonLd {
   get nodes () {
     let nodes = []
 
+    if (this.options.title) {
+      nodes = nodes.concat(this.title, '\n')
+    }
+
+    if (this.options.description) {
+      nodes = nodes.concat(this.description, '\n')
+    }
+
     nodes = nodes.concat(this.script)
+    nodes = nodes.filter(node => !!node)
 
     return nodes
   }
@@ -61,8 +71,27 @@ class JsonLd {
     }
   }
 
-  get meta () {
-    // Add the process to generate <meta> trees
+  get title () {
+    const title = this.data.name || this.data.headline
+
+    if (!title) return
+
+    return {
+      tag: 'title',
+      content: [
+        title
+      ]
+    }
+  }
+
+  get description () {
+    return {
+      tag: 'meta',
+      attrs: {
+        name: 'description',
+        content: this.data.description
+      }
+    }
   }
 
   get opengraph () {
