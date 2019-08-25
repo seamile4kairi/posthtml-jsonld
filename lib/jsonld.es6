@@ -103,7 +103,7 @@ class JsonLd {
     try {
       rawData = require(resolve(this.options.root, this.src));
     } catch (e) {
-      throw getError(errors.notFound);
+      throw getError(errors.notFound, this.src);
     }
 
     return rawData;

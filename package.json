@@ -22,9 +22,11 @@
   "scripts": {
     "prebuild": "rm -f lib/*.js",
     "build": "babel -d lib/ lib/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "npm run build",
+    "test": "ava"
   },
   "devDependencies": {
+    "ava": "^2.3.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.2",
