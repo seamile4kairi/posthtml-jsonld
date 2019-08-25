@@ -1,1 +1,1 @@
-module.exports = require('./lib/jsonld').default;
+module.exports = require('./lib/jsonld').default

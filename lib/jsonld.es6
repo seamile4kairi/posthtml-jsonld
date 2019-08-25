@@ -1,64 +1,64 @@
 import {
-  resolve,
-} from 'path';
-import util from 'util';
+  resolve
+} from 'path'
+import util from 'util'
 
 const errors = {
-  hasNoSrc: `<jsonld> has no [src] attribute.`,
-  notFound: `Required JSON was not found.`,
-  isInvalid: `Required JSON may be invalid. Check the file in: https://search.google.com/structured-data/testing-tool/`,
-};
+  hasNoSrc: '<jsonld> has no [src] attribute.',
+  notFound: 'Required JSON was not found.',
+  isInvalid: 'Required JSON may be invalid. Check the file in: https://search.google.com/structured-data/testing-tool/'
+}
 
 export default (options = {}) => tree => {
   options = Object.assign({
     root: './',
     meta: false,
     opengraph: false,
-    twittercards: false,
+    twittercards: false
   }, options)
 
   tree = tree.match({
-    tag: 'jsonld',
+    tag: 'jsonld'
   }, node => {
     if (!node.attrs || !node.attrs.src) {
-      throw getError(errors.hasNoSrc);
+      throw getError(errors.hasNoSrc)
     }
 
-    const data = new JsonLd(node.attrs.src, options);
+    const data = new JsonLd(node.attrs.src, options)
 
     return {
       tag: false,
-      content: data.nodes,
-    };
-  });
+      content: data.nodes
+    }
+  })
 
-  return tree;
-};
+  return tree
+}
 
 class JsonLd {
   constructor (src, options) {
-    this.src = src;
-    this.options = options;
+    this.src = src
+    this.options = options
   }
 
   get nodes () {
-    let nodes = [];
+    let nodes = []
 
-    nodes = nodes.concat(this.script);
+    nodes = nodes.concat(this.script)
 
-    return nodes;
+    return nodes
   }
 
   get script () {
     return {
       tag: 'script',
       attrs: {
-        type: 'application/ld+json',
+        type: 'application/ld+json'
       },
       content: [
-        JSON.stringify(this.data),
+        JSON.stringify(this.data)
       ]
-    };
+    }
   }
 
   get meta () {
@@ -74,43 +74,46 @@ class JsonLd {
   }
 
   get data () {
-    let data = this.rawData;
+    let data = this.rawData
 
     if (!data['@type']) {
-      throw getError(errors.isInvalid);
+      throw getError(errors.isInvalid)
     }
 
     switch (data['@type']) {
       case 'Article':
         data = Object.assign(data, {
           // Add properties
-        });
-
-      // Add another cases
+        })
+        break
 
       default:
         data = Object.assign(data, {
           // Add properties
-        });
+        })
     }
 
-    return data;
+    data = Object.assign(data, {
+      // Add common properties
+    })
+
+    return data
   }
 
   get rawData () {
-    let rawData;
+    let rawData
 
     try {
-      rawData = require(resolve(this.options.root, this.src));
+      rawData = require(resolve(this.options.root, this.src))
     } catch (e) {
-      throw getError(errors.notFound, this.src);
+      throw getError(errors.notFound, this.src)
     }
 
-    return rawData;
+    return rawData
   }
 }
 
 function getError () {
-  const msg = util.format.apply(util, arguments);
-  return new Error(`[posthtml-jsonld] ${msg}`);
+  const msg = util.format.apply(util, arguments)
+  return new Error(`[posthtml-jsonld] ${msg}`)
 }
