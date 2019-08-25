@@ -23,7 +23,7 @@
     "prebuild": "rm -f lib/*.js",
     "build": "babel -d lib/ lib/",
     "pretest": "npm run build",
-    "test": "ava"
+    "test": "ava test/*.js"
   },
   "devDependencies": {
     "ava": "^2.3.0",
@@ -36,6 +36,9 @@
   "babel": {
     "presets": [
       "es2015"
+    ],
+    "ignore": [
+      "test/"
     ]
   }
 }
