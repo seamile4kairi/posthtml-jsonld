@@ -52,7 +52,9 @@ class JsonLd {
   get script () {
     return {
       tag: 'script',
-      type: 'application/json+ld',
+      attrs: {
+        type: 'application/ld+json',
+      },
       content: [
         JSON.stringify(this.data),
       ]
@@ -109,6 +111,6 @@ class JsonLd {
 }
 
 function getError () {
-  const msg = util.format.apply(util, args);
+  const msg = util.format.apply(util, arguments);
   return new Error(`[posthtml-jsonld] ${msg}`);
 }
