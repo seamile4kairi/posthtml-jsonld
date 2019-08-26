@@ -45,5 +45,10 @@
     "ignore": [
       "test/"
     ]
+  },
+  "standard": {
+    "ignore": [
+      "lib/*.js"
+    ]
   }
 }
