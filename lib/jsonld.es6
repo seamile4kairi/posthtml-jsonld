@@ -317,7 +317,9 @@ class JsonLd {
               url: img
             }
           }
-        }
+          return img
+        })
+    }
 
         return img
       })
