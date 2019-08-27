@@ -24,7 +24,10 @@
     "build": "babel -d lib/ lib/",
     "lint": "standard **/*.js **/*.es6 | snazzy",
     "pretest": "npm run build",
-    "test": "npm run lint && ava test/*.js"
+    "test": "npm run lint && ava test/*.js",
+    "version": "npm t && git add -A",
+    "postversion": "git push && git push --tags",
+    "prepublish": "npm t"
   },
   "dependencies": {
     "posthtml": "^0.11.4"
