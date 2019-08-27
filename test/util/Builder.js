@@ -10,6 +10,16 @@ const {
   readFileSync
 } = require('fs')
 
+const template = name => `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<jsonld src="${name}.json"></jsonld>
+</head>
+<body></body>
+</html>
+`
+
 function Builder (name) {
   if (this === undefined) throw new TypeError()
   this.name = name
@@ -23,15 +33,11 @@ Builder.prototype = {
   },
 
   get fixture () {
-    return this.read('fixtures')
+    return template(this.name)
   },
 
   get expect () {
-    return this.read('expects')
-  },
-
-  read (dir) {
-    const path = join(process.cwd(), 'test', dir, `${this.name}.html`)
+    const path = join(process.cwd(), 'test', 'expects', `${this.name}.html`)
     return readFileSync(path, 'utf8')
   }
 }
