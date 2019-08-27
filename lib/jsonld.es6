@@ -212,6 +212,19 @@ class JsonLd {
       })
     }
 
+    // meta[property="og:video"]
+    if (this.data.video && this.data.video.length > 0) {
+      this.data.video.forEach(video => {
+        nodes.push('\n', {
+          tag: 'meta',
+          attrs: {
+            property: 'og:video',
+            content: video.contentUrl
+          }
+        })
+      })
+    }
+
     // meta[property="fb:app_id"]
     if (options.app_id) {
       nodes.push('\n', {
@@ -285,6 +298,19 @@ class JsonLd {
       })
     }
 
+    // meta[name="twitter:player"]
+    if (this.data.video.length > 0) {
+      this.data.video.forEach(video => {
+        nodes.push('\n', {
+          tag: 'meta',
+          attrs: {
+            name: 'twitter:player',
+            content: video.embedUrl
+          }
+        })
+      })
+    }
+
     return nodes
   }
 
@@ -318,6 +344,14 @@ class JsonLd {
             }
           }
           return img
+        })
+    }
+
+    if (data.video) {
+      data.video = [].concat(data.video)
+        .filter(video => {
+          if (!video.contentUrl && !video.embedUrl) return
+          return true
         })
     }
 
