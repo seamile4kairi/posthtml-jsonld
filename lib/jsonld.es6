@@ -198,7 +198,7 @@ class JsonLd {
     }
 
     // meta[property="og:image"]
-    if (this.data.image.length > 0) {
+    if (this.data.image && this.data.image.length > 0) {
       this.data.image.forEach(img => {
         nodes.push('\n', {
           tag: 'meta',
@@ -306,13 +306,14 @@ class JsonLd {
         })
     }
 
-    data = Object.assign(data, {
-      // Add common properties
-      image: [].concat(data.image).map(img => {
-        if (typeof img === 'string') {
-          img = {
-            '@type': 'ImageObject',
-            url: img
+    if (data.image) {
+      data.image = [].concat(data.image)
+        .map(img => {
+          if (typeof img === 'string') {
+            img = {
+              '@type': 'ImageObject',
+              url: img
+            }
           }
         }
 
