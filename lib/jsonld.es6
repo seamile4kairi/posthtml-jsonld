@@ -151,7 +151,7 @@ class JsonLd {
         type = 'article'
         break
 
-      case ('Product'):
+      case 'Product':
         type = 'product'
         break
 
