@@ -145,7 +145,9 @@ class JsonLd {
     // meta[property="og:type"]
     let type = options.type || this.data['@type']
     switch (type) {
-      case ('BlogPosting'):
+      case 'Article':
+      case 'NewsArticle':
+      case 'BlogPosting':
         type = 'article'
         break
 
@@ -271,7 +273,7 @@ class JsonLd {
     }
 
     // meta[name="twitter:image"]
-    if (this.data.image.length > 0) {
+    if (this.data.image && this.data.image.length > 0) {
       this.data.image.forEach(img => {
         nodes.push('\n', {
           tag: 'meta',
