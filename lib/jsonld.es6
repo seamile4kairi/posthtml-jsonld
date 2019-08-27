@@ -286,7 +286,7 @@ class JsonLd {
     }
 
     // meta[name="twitter:image"]
-    if (this.data.image.length > 0) {
+    if (this.data.image && this.data.image.length > 0) {
       this.data.image.forEach(img => {
         nodes.push('\n', {
           tag: 'meta',
@@ -299,7 +299,7 @@ class JsonLd {
     }
 
     // meta[name="twitter:player"]
-    if (this.data.video.length > 0) {
+    if (this.data.video && this.data.video.length > 0) {
       this.data.video.forEach(video => {
         nodes.push('\n', {
           tag: 'meta',
