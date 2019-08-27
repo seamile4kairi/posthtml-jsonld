@@ -321,8 +321,8 @@ class JsonLd {
         })
     }
 
-        return img
-      })
+    data = Object.assign(data, {
+      // Add common properties
     })
 
     return data
