@@ -28,10 +28,7 @@ export default (options = {}) => tree => {
 
     const data = new JsonLd(node.attrs.src, options)
 
-    return {
-      tag: false,
-      content: data.nodes
-    }
+    return data.nodes
   })
 
   return tree
@@ -74,7 +71,12 @@ class JsonLd {
     // script[type="application/ld+json"]
     nodes.push(this.script)
 
-    return nodes
+    return {
+      tag: false,
+      content: [
+        nodes
+      ]
+    }
   }
 
   get script () {
@@ -292,7 +294,7 @@ class JsonLd {
     }
 
     switch (data['@type']) {
-      case 'Article':
+      case 'BlogPosting':
         data = Object.assign(data, {
           // Add properties
         })
