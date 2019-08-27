@@ -12,6 +12,7 @@ const errors = {
 export default (options = {}) => tree => {
   options = Object.assign({
     root: './',
+    url: false,
     title: false,
     description: false,
     opengraph: false,
@@ -43,18 +44,35 @@ class JsonLd {
   }
 
   get nodes () {
-    let nodes = []
+    const nodes = []
 
-    if (this.options.title) {
-      nodes = nodes.concat(this.title, '\n')
+    // title
+    if (this.options.title && this._title) {
+      nodes.push(this.title, '\n')
     }
 
+    // meta[name="description"]
     if (this.options.description) {
-      nodes = nodes.concat(this.description, '\n')
+      nodes.push(this.description || '', '\n')
     }
 
-    nodes = nodes.concat(this.script)
-    nodes = nodes.filter(node => !!node)
+    // meta[property="og:*"]
+    if (this.options.opengraph) {
+      nodes.push(this.opengraph, '\n')
+    }
+
+    // meta[name="twtter:*"]
+    if (this.options.twittercards) {
+      nodes.push(this.twittercards, '\n')
+    }
+
+    // link[rel="canonical"]
+    if (this._url) {
+      nodes.push(this.url, '\n')
+    }
+
+    // script[type="application/ld+json"]
+    nodes.push(this.script)
 
     return nodes
   }
@@ -71,15 +89,39 @@ class JsonLd {
     }
   }
 
-  get title () {
-    const title = this.data.name || this.data.headline
+  get _url () {
+    const options = this.options.url
+    return options.canonical || this.data.url
+  }
 
-    if (!title) return
+  get url () {
+    if (!this._url) return
+
+    // const options = this.options.url
+    const nodes = []
+
+    nodes.push({
+      tag: 'link',
+      attrs: {
+        rel: 'canonical',
+        href: this._url
+      }
+    })
+
+    return nodes
+  }
+
+  get _title () {
+    return this.data.name || this.data.headline
+  }
+
+  get title () {
+    if (!this._title) return
 
     return {
       tag: 'title',
       content: [
-        title
+        this._title
       ]
     }
   }
@@ -95,11 +137,151 @@ class JsonLd {
   }
 
   get opengraph () {
-    // Add the process to generate meta[name="og:*"] trees
+    const options = this.options.opengraph
+    const nodes = []
+
+    // meta[property="og:type"]
+    let type = options.type || this.data['@type']
+    switch (type) {
+      case ('BlogPosting'):
+        type = 'article'
+        break
+
+      case ('Product'):
+        type = 'product'
+        break
+
+      default:
+        type = 'website'
+    }
+    nodes.push({
+      tag: 'meta',
+      attrs: {
+        property: 'og:type',
+        content: type
+      }
+    })
+
+    // meta[property="og:title"]
+    if (this._title) {
+      nodes.push('\n', {
+        tag: 'meta',
+        attrs: {
+          property: 'og:title',
+          content: this._title
+        }
+      })
+    }
+
+    // meta[property="og:description"]
+    if (this.data.description) {
+      nodes.push('\n', {
+        tag: 'meta',
+        attrs: {
+          property: 'og:description',
+          content: this.data.description
+        }
+      })
+    }
+
+    // meta[property="og:url"]
+    if (this._url) {
+      nodes.push('\n', {
+        tag: 'meta',
+        attrs: {
+          property: 'og:url',
+          content: this._url
+        }
+      })
+    }
+
+    // meta[property="og:image"]
+    if (this.data.image.length > 0) {
+      this.data.image.forEach(img => {
+        nodes.push('\n', {
+          tag: 'meta',
+          attrs: {
+            property: 'og:image',
+            content: img.url
+          }
+        })
+      })
+    }
+
+    // meta[property="fb:app_id"]
+    if (options.app_id) {
+      nodes.push('\n', {
+        tag: 'meta',
+        attrs: {
+          property: 'fb:app_id',
+          content: options.app_id
+        }
+      })
+    }
+
+    return nodes
   }
 
   get twittercards () {
-    // Add the process to generate meta[name="twitter:*"] trees
+    const options = this.options.twittercards
+    const nodes = []
+
+    // meta[name="twitter:card"]
+    nodes.push({
+      tag: 'meta',
+      attrs: {
+        name: 'twitter:card',
+        content: options.card || 'summary_large_image'
+      }
+    })
+
+    // meta[name="twitter:title]
+    if (this._title) {
+      nodes.push('\n', {
+        tag: 'meta',
+        attrs: {
+          name: 'twitter:title',
+          content: this._title
+        }
+      })
+    }
+
+    // meta[name="twitter:description"]
+    if (this.data.description) {
+      nodes.push('\n', {
+        tag: 'meta',
+        attrs: {
+          name: 'twitter:description',
+          content: this.data.description
+        }
+      })
+    }
+
+    // meta[name="twitter:url"]
+    if (this._url) {
+      nodes.push('\n', {
+        tag: 'meta',
+        attrs: {
+          name: 'twitter:url',
+          content: this._url
+        }
+      })
+    }
+
+    // meta[name="twitter:image"]
+    if (this.data.image.length > 0) {
+      this.data.image.forEach(img => {
+        nodes.push('\n', {
+          tag: 'meta',
+          attrs: {
+            name: 'twitter:image',
+            content: img.url
+          }
+        })
+      })
+    }
+
+    return nodes
   }
 
   get data () {
@@ -124,6 +306,16 @@ class JsonLd {
 
     data = Object.assign(data, {
       // Add common properties
+      image: [].concat(data.image).map(img => {
+        if (typeof img === 'string') {
+          img = {
+            '@type': 'ImageObject',
+            url: img
+          }
+        }
+
+        return img
+      })
     })
 
     return data
