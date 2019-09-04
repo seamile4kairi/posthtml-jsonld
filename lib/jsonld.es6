@@ -12,11 +12,14 @@ const errors = {
 export default (options = {}) => tree => {
   options = Object.assign({
     root: './',
-    url: false,
+    protocol: 'http',
+    domain: 'localhost',
+    basePath: '/',
     title: false,
     description: false,
     opengraph: false,
-    twittercards: false
+    twittercards: false,
+    canonical: false
   }, options)
 
   tree = tree.match({
@@ -64,8 +67,8 @@ class JsonLd {
     }
 
     // link[rel="canonical"]
-    if (this._url) {
-      nodes.push(this.url, '\n')
+    if (this.options.canonical && this.canonical) {
+      nodes.push(this.canonical, '\n')
     }
 
     // script[type="application/ld+json"]
@@ -80,37 +83,18 @@ class JsonLd {
   }
 
   get script () {
+    let str = JSON.stringify(this.data)
+    str = this.optimizeUrl(str)
+
     return {
       tag: 'script',
       attrs: {
         type: 'application/ld+json'
       },
       content: [
-        JSON.stringify(this.data)
+        str
       ]
     }
-  }
-
-  get _url () {
-    const options = this.options.url
-    return options.canonical || this.data.url
-  }
-
-  get url () {
-    if (!this._url) return
-
-    // const options = this.options.url
-    const nodes = []
-
-    nodes.push({
-      tag: 'link',
-      attrs: {
-        rel: 'canonical',
-        href: this._url
-      }
-    })
-
-    return nodes
   }
 
   get _title () {
@@ -129,6 +113,8 @@ class JsonLd {
   }
 
   get description () {
+    if (!this.data.description) return
+
     return {
       tag: 'meta',
       attrs: {
@@ -189,12 +175,12 @@ class JsonLd {
     }
 
     // meta[property="og:url"]
-    if (this._url) {
+    if (this.data.url) {
       nodes.push('\n', {
         tag: 'meta',
         attrs: {
           property: 'og:url',
-          content: this._url
+          content: this.data.url
         }
       })
     }
@@ -275,12 +261,12 @@ class JsonLd {
     }
 
     // meta[name="twitter:url"]
-    if (this._url) {
+    if (this.data.url) {
       nodes.push('\n', {
         tag: 'meta',
         attrs: {
           name: 'twitter:url',
-          content: this._url
+          content: this.data.url
         }
       })
     }
@@ -314,6 +300,18 @@ class JsonLd {
     return nodes
   }
 
+  get canonical () {
+    if (!this.data.url) return
+
+    return {
+      tag: 'link',
+      attrs: {
+        rel: 'canonical',
+        href: this.data.url
+      }
+    }
+  }
+
   get data () {
     let data = this.rawData
 
@@ -334,6 +332,10 @@ class JsonLd {
         })
     }
 
+    if (data.url) {
+      data.url = this.optimizeUrl(data.url)
+    }
+
     if (data.image) {
       data.image = [].concat(data.image)
         .map(img => {
@@ -343,15 +345,24 @@ class JsonLd {
               url: img
             }
           }
+
+          img.url = this.optimizeUrl(img.url)
+
           return img
         })
     }
 
     if (data.video) {
       data.video = [].concat(data.video)
-        .filter(video => {
-          if (!video.contentUrl && !video.embedUrl) return
-          return true
+        .filter(video => (video.contentUrl || video.embedUrl))
+        .map(video => {
+          if (video.contentUrl) {
+            video.contentUrl = this.optimizeUrl(video.contentUrl)
+          }
+          if (video.embedUrl) {
+            video.embedUrl = this.optimizeUrl(video.embedUrl)
+          }
+          return video
         })
     }
 
@@ -372,6 +383,18 @@ class JsonLd {
     }
 
     return rawData
+  }
+
+  optimizeUrl (str) {
+    if (typeof str !== 'string') return str
+
+    const protocol = this.options.protocol
+    const domain = this.options.domain
+    const basePath = this.options.basePath.replace(/^\//, '')
+
+    return str
+      .replace(/~\//g, `/${basePath}`)
+      .replace(/@\//g, `${protocol}://${domain}/${basePath}`)
   }
 }
 
