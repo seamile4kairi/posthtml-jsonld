@@ -47,12 +47,12 @@ class JsonLd {
     const nodes = []
 
     // title
-    if (this.options.title && this._title) {
+    if (this.options.title && this.title) {
       nodes.push(this.title, '\n')
     }
 
     // meta[name="description"]
-    if (this.options.description) {
+    if (this.options.description && this.description) {
       nodes.push(this.description || '', '\n')
     }
 
