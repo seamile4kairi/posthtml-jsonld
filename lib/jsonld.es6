@@ -19,7 +19,8 @@ export default (options = {}) => tree => {
     description: false,
     opengraph: false,
     twittercards: false,
-    canonical: false
+    canonical: false,
+    alternate: false
   }, options)
 
   tree = tree.match({
@@ -69,6 +70,11 @@ class JsonLd {
     // link[rel="canonical"]
     if (this.options.canonical && this.canonical) {
       nodes.push(this.canonical, '\n')
+    }
+
+    // link[rel="alternate"]
+    if (this.options.alternate && this.alternate) {
+      nodes.push(this.alternate, '\n')
     }
 
     // script[type="application/ld+json"]
@@ -310,6 +316,37 @@ class JsonLd {
         href: this.data.url
       }
     }
+  }
+
+  get alternate () {
+    if (!this.data.url) return
+
+    const options = [].concat(this.options.alternate)
+      .filter(opt => typeof opt === 'object')
+      .filter(opt => (opt.media || opt.hreflang))
+      .filter(opt => (opt.href && typeof opt.href === 'function'))
+    const nodes = []
+
+    if (options.length === 0) return
+
+    options.forEach((opt, i) => {
+      const attrs = {}
+
+      attrs.rel = 'alternate'
+      if (opt.media) attrs.media = opt.media
+      if (opt.hreflang) attrs.hreflang = opt.hreflang
+      attrs.href = opt.href(this.data.url)
+
+      nodes.push({
+        tag: 'link',
+        attrs: attrs
+      })
+      if (options.length > i + 1) {
+        nodes.push('\n')
+      }
+    })
+
+    return nodes
   }
 
   get data () {

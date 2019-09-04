@@ -14,7 +14,14 @@ test('index.html', async t => {
     description: {},
     opengraph: {},
     twittercards: {},
-    canonical: true
+    canonical: true,
+    alternate: [{
+      media: 'only screen and (max-width: 560px)',
+      href: url => url.replace(/\/$/, '') + '/sp/'
+    }, {
+      hreflang: 'en',
+      href: url => url.replace(/\/$/, '') + '/en/'
+    }]
   })
 
   return t.is(builder.expect, result.html)
