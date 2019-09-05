@@ -7,9 +7,8 @@ test('index.html', async t => {
   const builder = new Builder('index')
   const result = await builder.run({
     root: 'test/fixtures',
-    protocol: 'https',
-    domain: 'github.com',
-    basePath: '/seamile4kairi/posthtml-jsonld',
+    host: 'https://github.com',
+    base: '/seamile4kairi/posthtml-jsonld',
     title: {},
     description: {},
     opengraph: {},

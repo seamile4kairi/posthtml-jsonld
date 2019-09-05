@@ -1,4 +1,5 @@
 import {
+  join,
   resolve
 } from 'path'
 import util from 'util'
@@ -12,9 +13,8 @@ const errors = {
 export default (options = {}) => tree => {
   options = Object.assign({
     root: './',
-    protocol: 'http',
-    domain: 'localhost',
-    basePath: '/',
+    host: 'http://localhost',
+    base: '/',
     title: false,
     description: false,
     opengraph: false,
@@ -198,7 +198,7 @@ class JsonLd {
           tag: 'meta',
           attrs: {
             property: 'og:image',
-            content: img.url
+            content: this.normalizeUrl(img.url, true)
           }
         })
       })
@@ -207,11 +207,13 @@ class JsonLd {
     // meta[property="og:video"]
     if (this.data.video && this.data.video.length > 0) {
       this.data.video.forEach(video => {
+        if (!video.contentUrl) return
+
         nodes.push('\n', {
           tag: 'meta',
           attrs: {
             property: 'og:video',
-            content: video.contentUrl
+            content: this.normalizeUrl(video.contentUrl, true)
           }
         })
       })
@@ -284,7 +286,7 @@ class JsonLd {
           tag: 'meta',
           attrs: {
             name: 'twitter:image',
-            content: img.url
+            content: this.normalizeUrl(img.url, true)
           }
         })
       })
@@ -293,11 +295,13 @@ class JsonLd {
     // meta[name="twitter:player"]
     if (this.data.video && this.data.video.length > 0) {
       this.data.video.forEach(video => {
+        if (!video.embedUrl) return
+
         nodes.push('\n', {
           tag: 'meta',
           attrs: {
             name: 'twitter:player',
-            content: video.embedUrl
+            content: this.normalizeUrl(video.embedUrl, true)
           }
         })
       })
@@ -337,13 +341,11 @@ class JsonLd {
       if (opt.hreflang) attrs.hreflang = opt.hreflang
       attrs.href = opt.href(this.data.url)
 
+      if (i !== 0) nodes.push('\n')
       nodes.push({
         tag: 'link',
         attrs: attrs
       })
-      if (options.length > i + 1) {
-        nodes.push('\n')
-      }
     })
 
     return nodes
@@ -370,7 +372,7 @@ class JsonLd {
     }
 
     if (data.url) {
-      data.url = this.optimizeUrl(data.url)
+      data.url = this.normalizeUrl(data.url)
     }
 
     if (data.image) {
@@ -383,7 +385,7 @@ class JsonLd {
             }
           }
 
-          img.url = this.optimizeUrl(img.url)
+          img.url = this.normalizeUrl(img.url)
 
           return img
         })
@@ -394,10 +396,10 @@ class JsonLd {
         .filter(video => (video.contentUrl || video.embedUrl))
         .map(video => {
           if (video.contentUrl) {
-            video.contentUrl = this.optimizeUrl(video.contentUrl)
+            video.contentUrl = this.normalizeUrl(video.contentUrl)
           }
           if (video.embedUrl) {
-            video.embedUrl = this.optimizeUrl(video.embedUrl)
+            video.embedUrl = this.normalizeUrl(video.embedUrl)
           }
           return video
         })
@@ -422,16 +424,19 @@ class JsonLd {
     return rawData
   }
 
-  optimizeUrl (str) {
+  normalizeUrl (str, requireHost = false) {
     if (typeof str !== 'string') return str
+    if (/^(https?:)?\/\//.test(str)) return str
 
-    const protocol = this.options.protocol
-    const domain = this.options.domain
-    const basePath = this.options.basePath.replace(/^\//, '')
+    const host = this.options.host.replace(/\/$/, '')
+    const base = join('/', this.options.base)
+    const path = /^[~@]\//.test(str)
+      ? join(base, str.replace(/^[~@]\//, ''))
+      : join('/', str)
 
-    return str
-      .replace(/~\//g, `/${basePath}`)
-      .replace(/@\//g, `${protocol}://${domain}/${basePath}`)
+    if (requireHost || /^@\//.test(str)) return host + path
+    if (/^~\//.test(str)) return path
+    return path
   }
 }
 
