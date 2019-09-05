@@ -89,16 +89,13 @@ class JsonLd {
   }
 
   get script () {
-    let str = JSON.stringify(this.data)
-    str = this.optimizeUrl(str)
-
     return {
       tag: 'script',
       attrs: {
         type: 'application/ld+json'
       },
       content: [
-        str
+        JSON.stringify(this.data)
       ]
     }
   }
