@@ -1,4 +1,4 @@
-# PostHTML JSON-LD <img align="right" width="220" height="200" title="PostHTML logo" src="http://posthtml.github.io/posthtml/logo.svg">
+# PostHTML JSON-LD <img align="right" width="220" height="200" title="PostHTML logo" src="//posthtml.github.io/posthtml/logo.svg">
 
 [![NPM][npm]][npm-url]
 <!-- [![Deps][deps]][deps-url] -->
@@ -10,6 +10,7 @@
 Import an external file written in JSON-LD format, and insert it with ``<meta>`` tags.
 
 ### Before:
+
 #### ``~/index.html``
 ``` html
 <!DOCTYPE html>
@@ -21,6 +22,7 @@ Import an external file written in JSON-LD format, and insert it with ``<meta>``
 </body>
 </html>
 ```
+
 #### ``~/index.json``
 ```json
 {
@@ -39,6 +41,7 @@ Import an external file written in JSON-LD format, and insert it with ``<meta>``
 ```
 
 ### After:
+
 ``` html
 <!DOCTYPE html>
 <html>
@@ -65,18 +68,15 @@ Import an external file written in JSON-LD format, and insert it with ``<meta>``
 </html>
 ```
 
+
 ## Install
 
-Describe how big guys can install your plugin.
-
 ```bash
-$ npm i posthtml posthtml-jsonld
+$ npm i -D posthtml posthtml-jsonld
 ```
 
-## Usage
 
-Describe how people can use this plugin. Include info about build systems if it's
-necessary.
+## Usage
 
 ``` js
 const fs = require('fs');
@@ -91,86 +91,64 @@ posthtml()
 
 ## Options
 
-### root
+root
+:   ``String`` (Default: ``./``)
+:   The path to the root directory of JSON files.
 
-- Type: ``String``
-- Default: ``./``
+host
+:   ``String`` (Default: ``http://localhost``)
+:   Protocol & hostname of the site.
 
-The path to the root directory of JSON files.
+base
+:   ``String`` (Default: ``/``)
+:   Base path of the site.
 
-### host
+title
+:   ``Object``
+:   Page tile.
+:   *Add the detail later*
 
-- Type: ``String``
-- Default: ``http://localhost``
+description
+:   ``String``
+:   Page description.
 
-Protocol & hostname of the site.
+opengraph
+:   ``Object``
+:   Configrations for Open Graph.
+:   *Add the detail later*
 
-### base
+twittercards
+:   ``Object``
+:   Configrations for Twitter Card.
+:   *Add the detail later*
 
-- Type: ``String``
-- Default: ``/``
+canonical
+:   ``Boolean`` (Default: ``false``)
+:   Require ``link[rel="canonical"]``?
 
-Base path of the site.
+alternate
+:   ``Array<Object>``
+:   Alternative URLs (``link[rel="alternate"]``) for the page.
 
-### title
+alternate[].href
+:   *Required*
+:   ``Function``
+:   e.g.) ``url => url.replace(/\/\/www\./, '//ja.')``
 
-- Type: ``Object``
-- Default: ``false``
+alternate[].hreflang, alternate[].media
+:   ``String``
+:   Condition to apply alternative URLs.
 
-(Add the detail later)
-
-### description
-
-- Type: ``Object``
-- Default: ``false``
-
-(Add the detail later)
-
-### opengraph
-
-- Type: ``Object``
-- Default: ``false``
-
-(Add the detail later)
-
-### twittercards
-
-- Type: ``Object``
-- Default: ``false``
-
-(Add the detail later)
-
-### canonical
-
-- Type: ``Boolean``
-- Default: ``false``
-
-Require ``link[rel="canonical"]``?
-
-### alternate
-
-- Type: ``Array<Object>``
-- Default: ``false``
-
-Alternative URLs (``link[rel="alternate"]``) for the page.
-
-#### alternate[].href (Required)
-
-- Type: ``Function``
-- Example: ``url => url.replace(/\/\/www\./, '//ja.')``
-
-#### alternate[].hreflang
-#### alternate[].media
-
-- Type: ``String``
-
-Condition to apply alternative URLs
 
 ## Contributing
 
 See [PostHTML Guidelines](https://github.com/posthtml/posthtml/tree/master/docs) and [contribution guide](CONTRIBUTING.md).
 
+
 ## License [MIT](LICENSE)
+
+
+<!-- Links -->
 
 [npm]: https://img.shields.io/npm/v/posthtml-jsonld.svg
 [npm-url]: https://npmjs.com/package/posthtml-jsonld
