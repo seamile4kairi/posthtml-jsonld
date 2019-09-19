@@ -1,4 +1,5 @@
 import {
+  join,
   resolve
 } from 'path'
 import util from 'util'
@@ -12,11 +13,14 @@ const errors = {
 export default (options = {}) => tree => {
   options = Object.assign({
     root: './',
-    url: false,
+    host: 'http://localhost',
+    base: '/',
     title: false,
     description: false,
     opengraph: false,
-    twittercards: false
+    twittercards: false,
+    canonical: false,
+    alternate: false
   }, options)
 
   tree = tree.match({
@@ -44,12 +48,12 @@ class JsonLd {
     const nodes = []
 
     // title
-    if (this.options.title && this._title) {
+    if (this.options.title && this.title) {
       nodes.push(this.title, '\n')
     }
 
     // meta[name="description"]
-    if (this.options.description) {
+    if (this.options.description && this.description) {
       nodes.push(this.description || '', '\n')
     }
 
@@ -64,8 +68,13 @@ class JsonLd {
     }
 
     // link[rel="canonical"]
-    if (this._url) {
-      nodes.push(this.url, '\n')
+    if (this.options.canonical && this.canonical) {
+      nodes.push(this.canonical, '\n')
+    }
+
+    // link[rel="alternate"]
+    if (this.options.alternate && this.alternate) {
+      nodes.push(this.alternate, '\n')
     }
 
     // script[type="application/ld+json"]
@@ -91,28 +100,6 @@ class JsonLd {
     }
   }
 
-  get _url () {
-    const options = this.options.url
-    return options.canonical || this.data.url
-  }
-
-  get url () {
-    if (!this._url) return
-
-    // const options = this.options.url
-    const nodes = []
-
-    nodes.push({
-      tag: 'link',
-      attrs: {
-        rel: 'canonical',
-        href: this._url
-      }
-    })
-
-    return nodes
-  }
-
   get _title () {
     return this.data.name || this.data.headline
   }
@@ -129,6 +116,8 @@ class JsonLd {
   }
 
   get description () {
+    if (!this.data.description) return
+
     return {
       tag: 'meta',
       attrs: {
@@ -189,12 +178,12 @@ class JsonLd {
     }
 
     // meta[property="og:url"]
-    if (this._url) {
+    if (this.data.url) {
       nodes.push('\n', {
         tag: 'meta',
         attrs: {
           property: 'og:url',
-          content: this._url
+          content: this.data.url
         }
       })
     }
@@ -206,7 +195,7 @@ class JsonLd {
           tag: 'meta',
           attrs: {
             property: 'og:image',
-            content: img.url
+            content: this.normalizeUrl(img.url, true)
           }
         })
       })
@@ -215,11 +204,13 @@ class JsonLd {
     // meta[property="og:video"]
     if (this.data.video && this.data.video.length > 0) {
       this.data.video.forEach(video => {
+        if (!video.contentUrl) return
+
         nodes.push('\n', {
           tag: 'meta',
           attrs: {
             property: 'og:video',
-            content: video.contentUrl
+            content: this.normalizeUrl(video.contentUrl, true)
           }
         })
       })
@@ -275,12 +266,12 @@ class JsonLd {
     }
 
     // meta[name="twitter:url"]
-    if (this._url) {
+    if (this.data.url) {
       nodes.push('\n', {
         tag: 'meta',
         attrs: {
           name: 'twitter:url',
-          content: this._url
+          content: this.data.url
         }
       })
     }
@@ -292,7 +283,7 @@ class JsonLd {
           tag: 'meta',
           attrs: {
             name: 'twitter:image',
-            content: img.url
+            content: this.normalizeUrl(img.url, true)
           }
         })
       })
@@ -301,15 +292,58 @@ class JsonLd {
     // meta[name="twitter:player"]
     if (this.data.video && this.data.video.length > 0) {
       this.data.video.forEach(video => {
+        if (!video.embedUrl) return
+
         nodes.push('\n', {
           tag: 'meta',
           attrs: {
             name: 'twitter:player',
-            content: video.embedUrl
+            content: this.normalizeUrl(video.embedUrl, true)
           }
         })
       })
     }
+
+    return nodes
+  }
+
+  get canonical () {
+    if (!this.data.url) return
+
+    return {
+      tag: 'link',
+      attrs: {
+        rel: 'canonical',
+        href: this.data.url
+      }
+    }
+  }
+
+  get alternate () {
+    if (!this.data.url) return
+
+    const options = [].concat(this.options.alternate)
+      .filter(opt => typeof opt === 'object')
+      .filter(opt => (opt.media || opt.hreflang))
+      .filter(opt => (opt.href && typeof opt.href === 'function'))
+    const nodes = []
+
+    if (options.length === 0) return
+
+    options.forEach((opt, i) => {
+      const attrs = {}
+
+      attrs.rel = 'alternate'
+      if (opt.media) attrs.media = opt.media
+      if (opt.hreflang) attrs.hreflang = opt.hreflang
+      attrs.href = opt.href(this.data.url)
+
+      if (i !== 0) nodes.push('\n')
+      nodes.push({
+        tag: 'link',
+        attrs: attrs
+      })
+    })
 
     return nodes
   }
@@ -334,6 +368,10 @@ class JsonLd {
         })
     }
 
+    if (data.url) {
+      data.url = this.normalizeUrl(data.url)
+    }
+
     if (data.image) {
       data.image = [].concat(data.image)
         .map(img => {
@@ -343,15 +381,24 @@ class JsonLd {
               url: img
             }
           }
+
+          img.url = this.normalizeUrl(img.url)
+
           return img
         })
     }
 
     if (data.video) {
       data.video = [].concat(data.video)
-        .filter(video => {
-          if (!video.contentUrl && !video.embedUrl) return
-          return true
+        .filter(video => (video.contentUrl || video.embedUrl))
+        .map(video => {
+          if (video.contentUrl) {
+            video.contentUrl = this.normalizeUrl(video.contentUrl)
+          }
+          if (video.embedUrl) {
+            video.embedUrl = this.normalizeUrl(video.embedUrl)
+          }
+          return video
         })
     }
 
@@ -372,6 +419,21 @@ class JsonLd {
     }
 
     return rawData
+  }
+
+  normalizeUrl (str, requireHost = false) {
+    if (typeof str !== 'string') return str
+    if (/^(https?:)?\/\//.test(str)) return str
+
+    const host = this.options.host.replace(/\/$/, '')
+    const base = join('/', this.options.base)
+    const path = /^[~@]\//.test(str)
+      ? join(base, str.replace(/^[~@]\//, ''))
+      : join('/', str)
+
+    if (requireHost || /^@\//.test(str)) return host + path
+    if (/^~\//.test(str)) return path
+    return path
   }
 }
 

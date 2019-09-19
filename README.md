@@ -10,7 +10,9 @@
 Import an external file written in JSON-LD format, and insert it with ``<meta>`` tags.
 
 ### Before:
+#### ``~/index.html``
 ``` html
+<!DOCTYPE html>
 <html>
 <head>
 <jsonld src="./index.json"></jsonld>
@@ -19,16 +21,17 @@ Import an external file written in JSON-LD format, and insert it with ``<meta>``
 </body>
 </html>
 ```
+#### ``~/index.json``
 ```json
 {
   "@context": "http://schema.org",
   "@type": "Website",
-  "url": "https://github.com/seamile4kairi/posthtml-jsonld",
+  "url": "@/",
   "name": "PostHTML JSON-LD",
   "description": "PostHTML plugin to import JSON-LD from the external JSON file",
   "image": {
     "@type": "ImageObject",
-    "url": "https://dummyimage.com/1200x630/eee/fff.png",
+    "url": "~/assets/images/ogimage.png",
     "width": 1200,
     "height": 630
   }
@@ -37,25 +40,28 @@ Import an external file written in JSON-LD format, and insert it with ``<meta>``
 
 ### After:
 ``` html
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>PostHTML JSON-LD</title>
 <meta name="description" content="PostHTML plugin to import JSON-LD from the external JSON file">
 <meta property="og:type" content="website">
 <meta property="og:title" content="PostHTML JSON-LD">
 <meta property="og:description" content="PostHTML plugin to import JSON-LD from the external JSON file">
 <meta property="og:url" content="https://github.com/seamile4kairi/posthtml-jsonld">
-<meta property="og:image" content="https://dummyimage.com/1200x630/eee/fff.png">
+<meta property="og:image" content="https://github.com/seamile4kairi/posthtml-jsonld/assets/images/ogimage.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PostHTML JSON-LD">
 <meta name="twitter:description" content="PostHTML plugin to import JSON-LD from the external JSON file">
 <meta name="twitter:url" content="https://github.com/seamile4kairi/posthtml-jsonld">
-<meta name="twitter:image" content="https://dummyimage.com/1200x630/eee/fff.png">
+<meta name="twitter:image" content="https://github.com/seamile4kairi/posthtml-jsonld/assets/images/ogimage.png">
 <link rel="canonical" href="https://github.com/seamile4kairi/posthtml-jsonld">
-<script type="application/ld+json">{"@context":"http://schema.org","@type":"Website","url":"https://github.com/seamile4kairi/posthtml-jsonld","name":"PostHTML JSON-LD","description":"PostHTML plugin to import JSON-LD from the external JSON file","image":[{"@type":"ImageObject","url":"https://dummyimage.com/1200x630/eee/fff.png","width":1200,"height":630}]}</script>
+<link rel="alternate" media="only screen and (max-width: 560px)" href="https://github.com/seamile4kairi/posthtml-jsonld/sp/">
+<link rel="alternate" hreflang="en" href="https://github.com/seamile4kairi/posthtml-jsonld/en/">
+<script type="application/ld+json">{"@context":"http://schema.org","@type":"Website","url":"https://github.com/seamile4kairi/posthtml-jsonld","name":"PostHTML JSON-LD","description":"PostHTML plugin to import JSON-LD from the external JSON file","image":[{"@type":"ImageObject","url":"/seamile4kairi/posthtml-jsonld/assets/images/ogimage.png","width":1200,"height":630}]}</script>
 </head>
-<body>
-</body>
+<body></body>
 </html>
 ```
 
@@ -92,12 +98,19 @@ posthtml()
 
 The path to the root directory of JSON files.
 
-### url
+### host
 
-- Type: ``Object``
-- Default: ``false``
+- Type: ``String``
+- Default: ``http://localhost``
 
-(Add the detail later)
+Protocol & hostname of the site.
+
+### base
+
+- Type: ``String``
+- Default: ``/``
+
+Base path of the site.
 
 ### title
 
@@ -126,6 +139,32 @@ The path to the root directory of JSON files.
 - Default: ``false``
 
 (Add the detail later)
+
+### canonical
+
+- Type: ``Boolean``
+- Default: ``false``
+
+Require ``link[rel="canonical"]``?
+
+### alternate
+
+- Type: ``Array<Object>``
+- Default: ``false``
+
+Alternative URLs (``link[rel="alternate"]``) for the page.
+
+#### alternate[].href (Required)
+
+- Type: ``Function``
+- Example: ``url => url.replace(/\/\/www\./, '//ja.')``
+
+#### alternate[].hreflang
+#### alternate[].media
+
+- Type: ``String``
+
+Condition to apply alternative URLs
 
 ## Contributing
 

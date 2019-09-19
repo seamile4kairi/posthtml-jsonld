@@ -1,12 +1,12 @@
 {
   "@context": "http://schema.org",
   "@type": "Website",
-  "url": "https://github.com/seamile4kairi/posthtml-jsonld",
+  "url": "@/",
   "name": "PostHTML JSON-LD",
   "description": "PostHTML plugin to import JSON-LD from the external JSON file",
   "image": {
     "@type": "ImageObject",
-    "url": "https://dummyimage.com/1200x630/eee/fff.png",
+    "url": "~/assets/images/ogimage.png",
     "width": 1200,
     "height": 630
   }
