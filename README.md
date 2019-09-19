@@ -1,11 +1,11 @@
-# PostHTML JSON-LD <img align="right" width="220" height="200" title="PostHTML logo" src="//posthtml.github.io/posthtml/logo.svg">
+# PostHTML JSON-LD <img align="right" width="220" height="200" title="PostHTML logo" src="http://posthtml.github.io/posthtml/logo.svg">
 
 [![NPM][npm]][npm-url]
-<!-- [![Deps][deps]][deps-url] -->
-<!-- [![Build][build]][build-badge] -->
-<!-- [![Coverage][cover]][cover-badge] -->
-<!-- [![Standard Code Style][style]][style-url] -->
-<!-- [![Chat][chat]][chat-badge] -->
+[![Deps][deps]][deps-url]
+[![Build][build]][build-badge]
+[![Coverage][cover]][cover-badge]
+[![Standard Code Style][style]][style-url]
+[![Chat][chat]][chat-badge]
 
 Import an external file written in JSON-LD format, and insert it with ``<meta>`` tags.
 
@@ -91,53 +91,72 @@ posthtml()
 
 ## Options
 
-root
-:   ``String`` (Default: ``./``)
-:   The path to the root directory of JSON files.
+### root
 
-host
-:   ``String`` (Default: ``http://localhost``)
-:   Protocol & hostname of the site.
+``String`` (Default: ``./``)
 
-base
-:   ``String`` (Default: ``/``)
-:   Base path of the site.
+The path to the root directory of JSON files.
 
-title
-:   ``Object``
-:   Page tile.
-:   *Add the detail later*
+### host
 
-description
-:   ``String``
-:   Page description.
+``String`` (Default: ``http://localhost``)
 
-opengraph
-:   ``Object``
-:   Configrations for Open Graph.
-:   *Add the detail later*
+Protocol & hostname of the site.
 
-twittercards
-:   ``Object``
-:   Configrations for Twitter Card.
-:   *Add the detail later*
+### base
 
-canonical
-:   ``Boolean`` (Default: ``false``)
-:   Require ``link[rel="canonical"]``?
+``String`` (Default: ``/``)
 
-alternate
-:   ``Array<Object>``
-:   Alternative URLs (``link[rel="alternate"]``) for the page.
+Base path of the site.
 
-alternate[].href
-:   *Required*
-:   ``Function``
-:   e.g.) ``url => url.replace(/\/\/www\./, '//ja.')``
+### title
 
-alternate[].hreflang, alternate[].media
-:   ``String``
-:   Condition to apply alternative URLs.
+``Object``
+
+*WIP*. Page tile.
+
+### description
+
+``String``
+
+Page description.
+
+### opengraph
+
+``Object``
+
+*WIP*. Configrations for Open Graph.
+
+### twittercards
+
+``Object``
+
+*WIP*. Configrations for Twitter Card.
+
+### canonical
+
+``Boolean`` (Default: ``false``)
+
+Require ``link[rel="canonical"]``?
+
+### alternate
+
+``Array<Object>``
+
+Alternative URLs (``link[rel="alternate"]``) for the page.
+
+#### alternate[].href
+``Function``
+
+**Required**. A function to mutate cannonical URL into alternative URL.
+
+e.g.) ``url => url.replace(/\/\/www\./, '//ja.')``
+
+#### alternate[].hreflang
+#### alternate[].media
+``String``
+
+Condition to apply alternative URLs.
 
 
 ## Contributing
@@ -154,17 +173,17 @@ See [PostHTML Guidelines](https://github.com/posthtml/posthtml/tree/master/docs)
 [npm-url]: https://npmjs.com/package/posthtml-jsonld
 
 [deps]: https://david-dm.org/seamile4kairi/posthtml-jsonld.svg
-[deps-url]: https://david-dm.org/posthtml/posthtml-jsonld
+[deps-url]: https://david-dm.org/seamile4kairi/posthtml-jsonld
 
 [style]: https://img.shields.io/badge/code%20style-standard-yellow.svg
 [style-url]: http://standardjs.com/
 
-[build]: https://travis-ci.org/seamile4kairi/posthtml.svg?branch=master
-[build-badge]: https://travis-ci.org/seamile4kairi/posthtml?branch=master
+[build]: https://travis-ci.org/seamile4kairi/posthtml-jsonld.svg?branch=master
+[build-badge]: https://travis-ci.org/seamile4kairi/posthtml-jsonld?branch=master
 
-[cover]: https://coveralls.io/repos/seamile4kairi/posthtml/badge.svg?branch=master
-[cover-badge]: https://coveralls.io/r/seamile4kairi/posthtml?branch=master
+[cover]: https://coveralls.io/repos/seamile4kairi/posthtml-jsonld/badge.svg?branch=master
+[cover-badge]: https://coveralls.io/r/seamile4kairi/posthtml-jsonld?branch=master
 
 
-[chat]: https://badges.gitter.im/seamile4kairi/posthtml.svg
-[chat-badge]: https://gitter.im/seamile4kairi/posthtml?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"
+[chat]: https://badges.gitter.im/seamile4kairi/posthtml-jsonld.svg
+[chat-badge]: https://gitter.im/seamile4kairi/posthtml-jsonld?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"
