@@ -27,7 +27,7 @@
     "test": "npm run lint && ava test/*.js",
     "version": "npm t && git add -A",
     "postversion": "git push && git push --tags",
-    "prepublish": "npm t"
+    "prepare": "npm t"
   },
   "dependencies": {
     "posthtml": "^0.11.4"
