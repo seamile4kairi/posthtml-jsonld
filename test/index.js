@@ -6,7 +6,14 @@ const Builder = require('./util/Builder')
 const _config = {
   root: 'test/fixtures',
   host: 'https://github.com',
-  base: '/seamile4kairi/posthtml-jsonld'
+  base: '/seamile4kairi/posthtml-jsonld',
+  parents: [{
+    url: 'https://github.com',
+    title: 'Github'
+  }, {
+    url: 'https://github.com/seamile4kairi',
+    title: 'seamile4kairi'
+  }]
 }
 
 test('index', Object.assign(_config, {

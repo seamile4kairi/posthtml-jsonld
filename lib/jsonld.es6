@@ -15,6 +15,7 @@ export default (options = {}) => tree => {
     root: './',
     host: 'http://localhost',
     base: '/',
+    parents: [],
     title: false,
     description: false,
     opengraph: false,
@@ -41,6 +42,22 @@ export default (options = {}) => tree => {
 class JsonLd {
   constructor (src, options) {
     this.src = src
+
+    options.parents = []
+      .concat(options.parents)
+      .filter(item => {
+        if (typeof item !== 'object') return
+        if (!item.url || !item.title) return
+        return true
+      })
+      .map(item => ({
+        '@type': 'ListItem',
+        item: {
+          '@id': item.url,
+          name: item.title
+        }
+      }))
+
     this.options = options
   }
 
@@ -370,6 +387,25 @@ class JsonLd {
 
     if (data.url) {
       data.url = this.normalizeUrl(data.url)
+    }
+
+    const itemList = []
+      .concat(this.options.parents, data.itemListElement)
+      .filter(item => {
+        if (typeof item !== 'object') return
+        if (item['@type'] !== 'ListItem') return
+        if (!item.item) return
+        if (!item.item['@id'] || !item.item.name) return
+        return true
+      })
+      .map((item, i) => {
+        item.position = i + 1
+        item.item['@id'] = this.normalizeUrl(item.item['@id'])
+        return item
+      })
+
+    if (itemList.length > 0) {
+      data.itemListElement = itemList
     }
 
     if (data.image) {
