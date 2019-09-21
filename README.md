@@ -111,25 +111,25 @@ Base path of the site.
 
 ### title
 
-``Object``
+``Boolean || Object`` (Default: ``false``)
 
 *WIP*. Page tile.
 
 ### description
 
-``String``
+``Boolean || Object`` (Default: ``false``)
 
 Page description.
 
 ### opengraph
 
-``Object``
+``Boolean || Object`` (Default: ``false``)
 
 *WIP*. Configrations for Open Graph.
 
 ### twittercards
 
-``Object``
+``Boolean || Object`` (Default: ``false``)
 
 *WIP*. Configrations for Twitter Card.
 
@@ -141,7 +141,7 @@ Require ``link[rel="canonical"]``?
 
 ### alternate
 
-``Array<Object>``
+``Array<Object>`` (Default: ``[]``)
 
 Alternative URLs (``link[rel="alternate"]``) for the page.
 

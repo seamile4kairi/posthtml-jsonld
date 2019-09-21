@@ -11,7 +11,7 @@ const _config = {
 
 test('index', Object.assign(_config, {
   title: {},
-  description: {},
+  description: true,
   opengraph: {},
   twittercards: {},
   canonical: true,

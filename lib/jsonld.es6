@@ -20,7 +20,7 @@ export default (options = {}) => tree => {
     opengraph: false,
     twittercards: false,
     canonical: false,
-    alternate: false
+    alternate: []
   }, options)
 
   tree = tree.match({
@@ -73,7 +73,7 @@ class JsonLd {
     }
 
     // link[rel="alternate"]
-    if (this.options.alternate && this.alternate) {
+    if (this.options.alternate.length > 0 && this.alternate) {
       nodes.push(this.alternate, '\n')
     }
 
