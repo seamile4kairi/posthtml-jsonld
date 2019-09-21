@@ -1,6 +1,6 @@
 {
   "name": "posthtml-jsonld",
-  "version": "0.1.0-0",
+  "version": "0.1.0-1",
   "description": "PostHTML plugin to import JSON-LD from the external JSON file",
   "keywords": [
     "posthtml",
