@@ -17,7 +17,10 @@ const _config = {
 }
 
 test('index', Object.assign(_config, {
-  title: {},
+  title: {
+    fromParent: true,
+    separator: ' » '
+  },
   description: true,
   opengraph: {},
   twittercards: {},

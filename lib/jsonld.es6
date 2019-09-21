@@ -118,7 +118,22 @@ class JsonLd {
   }
 
   get _title () {
-    return this.data.name || this.data.headline
+    let title = this.data.name || this.data.headline
+    let structure = this.data.itemListElement
+      .map(item => item.item.name)
+    const options = this.options.title
+
+    if (!!structure && structure.length > 0) {
+      structure.push(title)
+
+      if (!options.fromParent) {
+        structure = structure.reverse()
+      }
+
+      title = structure.join(options.separator || ' | ')
+    }
+
+    return title
   }
 
   get title () {
