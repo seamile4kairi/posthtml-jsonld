@@ -366,23 +366,10 @@ class JsonLd {
   }
 
   get data () {
-    let data = this.rawData
+    const data = Object.assign({}, this.rawData)
 
     if (!data['@type']) {
       throw getError(errors.isInvalid)
-    }
-
-    switch (data['@type']) {
-      case 'BlogPosting':
-        data = Object.assign(data, {
-          // Add properties
-        })
-        break
-
-      default:
-        data = Object.assign(data, {
-          // Add properties
-        })
     }
 
     if (data.url) {
@@ -437,10 +424,6 @@ class JsonLd {
           return video
         })
     }
-
-    data = Object.assign(data, {
-      // Add common properties
-    })
 
     return data
   }
