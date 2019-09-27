@@ -119,18 +119,22 @@ class JsonLd {
 
   get _title () {
     let title = this.data.name || this.data.headline
-    let structure = this.data.itemListElement
-      .map(item => item.item.name)
     const options = this.options.title
 
-    if (!!structure && structure.length > 0) {
-      structure.push(title)
+    if (this.data.itemListElement) {
+      let structure = []
+        .concat(this.data.itemListElement)
+        .map(item => item.item.name)
 
-      if (!options.fromParent) {
-        structure = structure.reverse()
+      if (structure.length > 0) {
+        structure.push(title)
+
+        if (!options.fromParent) {
+          structure = structure.reverse()
+        }
+
+        title = structure.join(options.separator || ' | ')
       }
-
-      title = structure.join(options.separator || ' | ')
     }
 
     return title
@@ -400,9 +404,17 @@ class JsonLd {
         if (!item.item['@id'] || !item.item.name) return
         return true
       })
+      .map(item => {
+        item.item['@id'] = this.normalizeUrl(item.item['@id'])
+        return item
+      })
+      .filter(item => {
+        if (!data.url) return true
+        if (item.item['@id'] === data.url) return
+        return true
+      })
       .map((item, i) => {
         item.position = i + 1
-        item.item['@id'] = this.normalizeUrl(item.item['@id'])
         return item
       })
 
