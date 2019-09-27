@@ -8,15 +8,20 @@ const _config = {
   host: 'https://github.com',
   base: '/seamile4kairi/posthtml-jsonld',
   parents: [{
-    url: 'https://github.com',
-    title: 'Github'
-  }, {
-    url: 'https://github.com/seamile4kairi',
-    title: 'seamile4kairi'
-  }]
+    url: 'https://github.com/seamile4kairi/posthtml-jsonld',
+    title: 'PostHTML JSON-LD'
+  }],
+  canonical: true
 }
 
-test('index', Object.assign(_config, {
+test('index', Object.assign({}, _config, {
+  title: {},
+  description: true,
+  opengraph: {},
+  twittercards: {}
+}))
+
+test('sub/index', Object.assign({}, _config, {
   title: {
     fromParent: true,
     separator: ' » '
@@ -24,7 +29,6 @@ test('index', Object.assign(_config, {
   description: true,
   opengraph: {},
   twittercards: {},
-  canonical: true,
   alternate: [{
     media: 'only screen and (max-width: 560px)',
     href: url => url.replace(/\/$/, '') + '/sp/'

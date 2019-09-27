@@ -1,0 +1,13 @@
+{
+  "@context": "http://schema.org",
+  "@type": "Website",
+  "url": "@/sub/",
+  "name": "Subpage",
+  "description": "PostHTML plugin to import JSON-LD from the external JSON file",
+  "image": {
+    "@type": "ImageObject",
+    "url": "~/assets/images/ogimage.png",
+    "width": 1200,
+    "height": 630
+  }
+}
